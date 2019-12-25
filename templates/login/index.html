@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>消防管理系统</title>
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='themes/default/easyui.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='themes/icon.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='demo.css')}}">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+</head>
+<style>
+    body{
+        
+    background-image:url("{{url_for('static',filename='themes/icons/login.jpg')}}");
+    background-color:#cccccc;
+    }
+</style>
+<body>
+<div class="login">
+	<div class="login-top">
+		<h1>GuYuan  Iot</h1>
+		<form>
+			<input type="text" value="" placeholder="用户名称">
+			<input type="password" value=""  placeholder="用户密码">
+	    </form>
+	    <div class="forgot">
+	    	<input type="submit" value="Login"  id="login_button">
+	    </div>
+	</div>
+	<div class="login-bottom">
+	</div>
+</div>	
+</body>
+<script src="{{url_for('static',filename='jquery.min.js')}}" type="text/javascript"></script>
+<script src="{{url_for('static',filename='jquery.easyui.min.js')}}" type="text/javascript"></script>
+<script src="{{url_for('static',filename='layer/layer.js')}}" type="text/javascript"></script>
+<script>
+	$("#login_button").click(function(){
+		$.ajax({
+        type:"post",
+        dataType: 'json',
+        url:"login_checking",
+        data:{'user_name':'FF'},
+        success:function (res) {
+			// 进行返回参数判断
+			console.log(res);
+			layer.msg(res.info, {icon: 1,time:1500});
+			location.href = '/main/index';
+        }
+    });
+	});
+</script>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic DataGrid - jQuery EasyUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='themes/default/easyui.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='themes/icon.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='demo.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='jquery.easyui.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='layer/layer.js')}}"></script>
+</head>
+<body>
+	<div style="margin:20px 0;"></div>
+		<div style="margin: 20px 0;">
+			<span>设备号:</span>
+			<input id="devid" style="line-height:26px;border:1px solid #ccc">
+			<span>Devui:</span>
+			<input id="devui" style="line-height:26px;border:1px solid #ccc">
+			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="doSearch()" style="width:80px">Search</a>	
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="$('#add_device_div').window('open')">添加设备</a>
+		</div>
+	<table id ="mytab" class="easyui-datagrid" >
+    </table>
+	<div id="add_device_div" class="easyui-window" title="设备添加" close="true" data-options="modal:false,closed:true,iconCls:'icon-save'" style="width:40%;padding:10px;">
+		<form id="add_device_form" method="POST">
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="name" value="" style="width:80%" data-options="label:'Name:'">
+            </div>
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="devid" value="" style="width:80%" data-options="label:'Devid:'">
+            </div>
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="devui" value="" style="width:80%" data-options="label:'Devui:'">
+			</div>
+			<div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="type" value="" style="width:80%" data-options="label:'Type:'">
+			</div>
+			<div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="gps" value="" style="width:80%" data-options="label:'Gps:'">
+			</div>
+			<div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="bindvn" value="" style="width:80%" data-options="label:'Bindvn:'">
+			</div>
+			<div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="bindva" value="" style="width:80%" data-options="label:'Bindva:'">
+			</div>
+			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="add_device()">提交</a>          
+	</div>
+</body>
+<script>
+
+	function add_device(){
+		var data = $("#add_device_form").serializeArray();	
+		for(var i=0;i<data.length;i++){
+			var key = data[i].name;			
+			if(data[i].value.length == 0){
+				layer.msg('参数均为必填', {icon: 2,time:2000});
+				return;
+			}
+		}
+		$.ajax({
+        type:"post",
+        dataType: 'json',
+        url:"device_add",
+        data:data,
+        success:function (res) {
+			if (res.status =='error'){
+				layer.msg(res.info, {icon: 2,time:1500});
+			return;
+			}else{
+				layer.msg(res.info, {icon: 1,time:1500});
+				$('#add_device_div').window('close');		
+			}
+        }
+    });
+	}
+	
+	function doDelete(){
+		layer.msg("delete");
+	}
+
+	function doSearch(){
+		$('#mytab').datagrid('load',{
+		devid: $('#devid').val(),
+		devui: $('#devui').val()
+		});
+	}
+
+$(function(){
+    $('#mytab').datagrid({
+        method: 'post',
+        iconCls: 'icon-edit', //图标
+        singleSelect: false, //多选
+        height: $(window).height() * 0.85, //当前浏览器的 90%
+        width: $(window).width() * 0.95, //当前浏览器的95%
+        fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+        striped: true, //奇偶行颜色不同
+		pageSize: 20,
+        url: "device_info", //数据来源
+        remoteSort: true, //服务器端排序
+        pagination: true, //显示分页
+        rownumbers: true, //显示行号
+        columns: [
+        			[
+			           	{
+			                field: 'devid',
+			                title: '设备号',
+			                width: 10,
+			                formatter: function (value, row, index) {
+                                return value;
+			                } 
+			            },
+			            {
+			                field: 'name',
+			                title: '设备名称',
+			                width: 10,
+			                formatter: function (value, row, index) {
+			                    return value;
+			                } 
+			            },
+			            {
+			                field: 'devui',
+			                title: 'Devui',
+			                width: 10,
+			                formatter: function (value, row, index) {
+			                    return value;
+			                } 
+			            },
+                        {
+			                field: 'type',
+			                title: '类型',
+			                width: 10,
+			                formatter: function (value, row, index) {
+			                    return value;
+			                } 
+			            },
+                        {
+			                field: 'gps',
+			                title: 'GPS',
+			                width: 10,
+			                formatter: function (value, row, index) {
+			                    return value;
+			                } 
+			            },
+                        {
+			                field: 'bindva',
+			                title: 'VA号',
+			                width: 10,
+			                formatter: function (value, row, index) {
+			                    return value;
+			                } 
+			            },
+
+						
+                        {
+			                field: 'bindvn',
+			                title: 'VN',
+			                width: 10,
+			                formatter: function (value, row, index) {
+			                    return value;
+			            } 	
+			            },		
+						{
+							field:'operate',title:'操作',width:10,
+							formatter:function(value, row, index){
+								var str = '<a href="#" onclick='+doDelete()+' id="delete_button" name="delete_button" class="easyui-linkbutton" ></a>';
+								return str;
+							}
+						},
+					]
+        ],
+        onLoadSuccess: function () {
+            $('#mytab').datagrid('clearSelections'); 	
+        	$("a[name='delete_button']").linkbutton({text:'删除',plain:true,iconCls:'icon-remove'});  
+	    }
+    });
+}); 
+</script>
+</html>
